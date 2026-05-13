@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Getting started with psgc</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting started with psgc</h1>
+
+
+
+<div id="what-is-the-psgc" class="section level2">
+<h2>What is the PSGC?</h2>
+<p>The <strong>Philippine Standard Geographic Code (PSGC)</strong> is
+the official list of every geographic area in the Philippines — from the
+broadest (regions) down to the most granular (barangays). It is
+published and maintained by the <strong>Philippine Statistics Authority
+(PSA)</strong>.</p>
+<p>Each area is identified by a unique <strong>10-digit code</strong>
+and a geographic level:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Reg</code></td>
+<td>Region</td>
+<td>Region I – Ilocos Region</td>
+</tr>
+<tr class="even">
+<td><code>Prov</code></td>
+<td>Province</td>
+<td>Ilocos Norte</td>
+</tr>
+<tr class="odd">
+<td><code>City</code></td>
+<td>City</td>
+<td>Laoag City</td>
+</tr>
+<tr class="even">
+<td><code>Mun</code></td>
+<td>Municipality</td>
+<td>Bacarra</td>
+</tr>
+<tr class="odd">
+<td><code>SubMun</code></td>
+<td>Sub-municipality</td>
+<td>(Metro Manila component cities)</td>
+</tr>
+<tr class="even">
+<td><code>Bgy</code></td>
+<td>Barangay</td>
+<td>Brgy. 1, Laoag City</td>
+</tr>
+</tbody>
+</table>
+<p>The PSA releases updated PSGC files several times a year as new
+cities are chartered, barangays are created, or codes are renumbered.
+This package bundles <strong>12 releases</strong> from Q1 2023 through
+Q1 2026.</p>
+<hr />
+</div>
+<div id="checking-available-releases" class="section level2">
+<h2>Checking available releases</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">list_releases</span>()</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;Q1_2023&quot;    &quot;Q4_2023&quot;    &quot;April_2024&quot; &quot;Q2_2024&quot;    &quot;Q3_2024&quot;   </span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;  [6] &quot;Q4_2024&quot;    &quot;Q1_2025&quot;    &quot;Q2_2025&quot;    &quot;July_2025&quot;  &quot;Q3_2025&quot;   </span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; [11] &quot;Q4_2025&quot;    &quot;Q1_2026&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">latest_release</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Q1_2026&quot;</span></span></code></pre></div>
+<p>By default, every function in this package uses the latest release.
+You can always pass a specific release name to work with older data.</p>
+<hr />
+</div>
+<div id="getting-the-full-psgc-list" class="section level2">
+<h2>Getting the full PSGC list</h2>
+<p><code>get_psgc()</code> returns the complete list of geographic areas
+for a given release.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>ph <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">nrow</span>(ph)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; [1] 43768</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">head</span>(ph)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;    psgc_code                area_name correspondence_code geographic_level</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 Region I (Ilocos Region)           010000000              Reg</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 2 0102800000             Ilocos Norte           012800000             Prov</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 3 0102801000                    Adams           012801000              Mun</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; 4 0102801001                    Adams           012801001              Bgy</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; 5 0102802000                  Bacarra           012802000              Mun</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; 6 0102802001                     Bani           012802001              Bgy</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt;   old_name city_class income_classification urban_rural island_region</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; 1     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;        &lt;NA&gt;             L</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; 2     &lt;NA&gt;       &lt;NA&gt;                   1st        &lt;NA&gt;             L</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; 3     &lt;NA&gt;       &lt;NA&gt;                   4th        &lt;NA&gt;             L</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; 4     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;           R             L</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; 5     &lt;NA&gt;       &lt;NA&gt;                   2nd        &lt;NA&gt;             L</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; 6     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;           R             L</span></span></code></pre></div>
+<div id="filter-by-geographic-level" class="section level3">
+<h3>Filter by geographic level</h3>
+<p>You do not need to remember the exact code names — plain English
+works too:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>regions <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>(<span class="at">geographic_level =</span> <span class="st">&quot;Region&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>regions[, <span class="fu">c</span>(<span class="st">&quot;psgc_code&quot;</span>, <span class="st">&quot;area_name&quot;</span>)]</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;        psgc_code                                               area_name</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; 1     0100000000                                Region I (Ilocos Region)</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; 3398  0200000000                              Region II (Cagayan Valley)</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; 5808  0300000000                              Region III (Central Luzon)</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; 9051  0400000000                                Region IV-A (CALABARZON)</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; 13191 0500000000                                 Region V (Bicol Region)</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; 16783 0600000000                             Region VI (Western Visayas)</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; 20279 0700000000                            Region VII (Central Visayas)</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 22695 0800000000                           Region VIII (Eastern Visayas)</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 27210 0900000000                         Region IX (Zamboanga Peninsula)</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 29621 1000000000                            Region X (Northern Mindanao)</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 31742 1100000000                                Region XI (Davao Region)</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 32959 1200000000                               Region XII (SOCCSKSARGEN)</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 34110 1300000000                           National Capital Region (NCR)</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 35857 1400000000                  Cordillera Administrative Region (CAR)</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 37119 1600000000                                    Region XIII (Caraga)</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; 38510 1700000000                                         MIMAROPA Region</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; 40049 1800000000                              Negros Island Region (NIR)</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; 41469 1900000000 Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>provinces <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>(<span class="at">geographic_level =</span> <span class="st">&quot;Province&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">nrow</span>(provinces)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] 82</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fu">head</span>(provinces[, <span class="fu">c</span>(<span class="st">&quot;psgc_code&quot;</span>, <span class="st">&quot;area_name&quot;</span>)])</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;       psgc_code    area_name</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 2    0102800000 Ilocos Norte</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 585  0102900000   Ilocos Sur</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 1388 0103300000     La Union</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 1985 0105500000   Pangasinan</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 3399 0200900000      Batanes</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 3435 0201500000      Cagayan</span></span></code></pre></div>
+<p>You can filter for multiple levels at once by passing a vector:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>city_mun <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>(<span class="at">geographic_level =</span> <span class="fu">c</span>(<span class="st">&quot;City&quot;</span>, <span class="st">&quot;Municipality&quot;</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">nrow</span>(city_mun)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] 1642</span></span></code></pre></div>
+<p>There is also a convenient shorthand, <code>&quot;city_mun&quot;</code>, that
+does the same thing:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">get_psgc</span>(<span class="at">geographic_level =</span> <span class="st">&quot;city_mun&quot;</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] 1642</span></span></code></pre></div>
+</div>
+<div id="using-a-specific-release" class="section level3">
+<h3>Using a specific release</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>ph_2023 <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>(<span class="st">&quot;Q1_2023&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">nrow</span>(ph_2023)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; [1] 43784</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="looking-up-a-specific-code" class="section level2">
+<h2>Looking up a specific code</h2>
+<p>If you already have a PSGC code and want its details, use
+<code>psgc_info()</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">psgc_info</span>(<span class="st">&quot;0100000000&quot;</span>) <span class="co"># Region I</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;    psgc_code                area_name correspondence_code geographic_level</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 Region I (Ilocos Region)           010000000              Reg</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;   old_name city_class income_classification urban_rural island_region release</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 1     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;        &lt;NA&gt;             L Q1_2026</span></span></code></pre></div>
+<p>You can look up multiple codes at once:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">psgc_info</span>(<span class="fu">c</span>(<span class="st">&quot;0100000000&quot;</span>, <span class="st">&quot;0102800000&quot;</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt;    psgc_code                area_name correspondence_code geographic_level</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 Region I (Ilocos Region)           010000000              Reg</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 2 0102800000             Ilocos Norte           012800000             Prov</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt;   old_name city_class income_classification urban_rural island_region release</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 1     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;        &lt;NA&gt;             L Q1_2026</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 2     &lt;NA&gt;       &lt;NA&gt;                   1st        &lt;NA&gt;             L Q1_2026</span></span></code></pre></div>
+<p><strong>Short codes are accepted</strong> — the package pads the rest
+with trailing zeros, so you only need to provide enough digits to
+identify the area:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">psgc_info</span>(<span class="st">&quot;01&quot;</span>)      <span class="co"># same as &quot;0100000000&quot; — Region I</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt;    psgc_code                area_name correspondence_code geographic_level</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 Region I (Ilocos Region)           010000000              Reg</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt;   old_name city_class income_classification urban_rural island_region release</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 1     &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;        &lt;NA&gt;             L Q1_2026</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">psgc_info</span>(<span class="st">&quot;01028&quot;</span>)  <span class="co"># same as &quot;0102800000&quot; — Ilocos Norte</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt;    psgc_code    area_name correspondence_code geographic_level old_name</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 2 0102800000 Ilocos Norte           012800000             Prov     &lt;NA&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;   city_class income_classification urban_rural island_region release</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; 2       &lt;NA&gt;                   1st        &lt;NA&gt;             L Q1_2026</span></span></code></pre></div>
+<hr />
+</div>
+<div id="population-data" class="section level2">
+<h2>Population data</h2>
+<p><code>get_population()</code> returns PSA census figures (2015, 2020,
+2024) for all geographic areas in a release.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">get_population</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">head</span>(pop)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt;    psgc_code year population</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 2015    5026128</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; 2 0100000000 2020    5301139</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 3 0100000000 2024    5342453</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 4 0102800000 2015     593081</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; 5 0102800000 2020     609588</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; 6 0102800000 2024     618850</span></span></code></pre></div>
+<div id="add-area-names-and-geographic-levels" class="section level3">
+<h3>Add area names and geographic levels</h3>
+<p>Set <code>details = TRUE</code> to include the area name and level
+alongside the numbers:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>pop_detailed <span class="ot">&lt;-</span> <span class="fu">get_population</span>(<span class="at">details =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">head</span>(pop_detailed)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt;    psgc_code                area_name geographic_level year population</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; 1 0100000000 Region I (Ilocos Region)              Reg 2015    5026128</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; 2 0100000000 Region I (Ilocos Region)              Reg 2020    5301139</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; 3 0100000000 Region I (Ilocos Region)              Reg 2024    5342453</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; 4 0102800000             Ilocos Norte             Prov 2015     593081</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; 5 0102800000             Ilocos Norte             Prov 2020     609588</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; 6 0102800000             Ilocos Norte             Prov 2024     618850</span></span></code></pre></div>
+</div>
+<div id="filter-by-geographic-level-1" class="section level3">
+<h3>Filter by geographic level</h3>
+<p>Same aliases as <code>get_psgc()</code> work here too:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>region_pop <span class="ot">&lt;-</span> <span class="fu">get_population</span>(<span class="at">geographic_level =</span> <span class="st">&quot;Region&quot;</span>, <span class="at">details =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>region_pop</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt;     psgc_code                                               area_name</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; 1  0100000000                                Region I (Ilocos Region)</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; 2  0100000000                                Region I (Ilocos Region)</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; 3  0100000000                                Region I (Ilocos Region)</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; 4  0200000000                              Region II (Cagayan Valley)</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; 5  0200000000                              Region II (Cagayan Valley)</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; 6  0200000000                              Region II (Cagayan Valley)</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt; 7  0300000000                              Region III (Central Luzon)</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; 8  0300000000                              Region III (Central Luzon)</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt; 9  0300000000                              Region III (Central Luzon)</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt; 10 0400000000                                Region IV-A (CALABARZON)</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co">#&gt; 11 0400000000                                Region IV-A (CALABARZON)</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co">#&gt; 12 0400000000                                Region IV-A (CALABARZON)</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co">#&gt; 13 0500000000                                 Region V (Bicol Region)</span></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co">#&gt; 14 0500000000                                 Region V (Bicol Region)</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a><span class="co">#&gt; 15 0500000000                                 Region V (Bicol Region)</span></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co">#&gt; 16 0600000000                             Region VI (Western Visayas)</span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co">#&gt; 17 0600000000                             Region VI (Western Visayas)</span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co">#&gt; 18 0600000000                             Region VI (Western Visayas)</span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a><span class="co">#&gt; 19 0700000000                            Region VII (Central Visayas)</span></span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="co">#&gt; 20 0700000000                            Region VII (Central Visayas)</span></span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a><span class="co">#&gt; 21 0700000000                            Region VII (Central Visayas)</span></span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a><span class="co">#&gt; 22 0800000000                           Region VIII (Eastern Visayas)</span></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a><span class="co">#&gt; 23 0800000000                           Region VIII (Eastern Visayas)</span></span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="co">#&gt; 24 0800000000                           Region VIII (Eastern Visayas)</span></span>
+<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a><span class="co">#&gt; 25 0900000000                         Region IX (Zamboanga Peninsula)</span></span>
+<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a><span class="co">#&gt; 26 0900000000                         Region IX (Zamboanga Peninsula)</span></span>
+<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a><span class="co">#&gt; 27 0900000000                         Region IX (Zamboanga Peninsula)</span></span>
+<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a><span class="co">#&gt; 28 1000000000                            Region X (Northern Mindanao)</span></span>
+<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a><span class="co">#&gt; 29 1000000000                            Region X (Northern Mindanao)</span></span>
+<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a><span class="co">#&gt; 30 1000000000                            Region X (Northern Mindanao)</span></span>
+<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a><span class="co">#&gt; 31 1100000000                                Region XI (Davao Region)</span></span>
+<span id="cb13-35"><a href="#cb13-35" tabindex="-1"></a><span class="co">#&gt; 32 1100000000                                Region XI (Davao Region)</span></span>
+<span id="cb13-36"><a href="#cb13-36" tabindex="-1"></a><span class="co">#&gt; 33 1100000000                                Region XI (Davao Region)</span></span>
+<span id="cb13-37"><a href="#cb13-37" tabindex="-1"></a><span class="co">#&gt; 34 1200000000                               Region XII (SOCCSKSARGEN)</span></span>
+<span id="cb13-38"><a href="#cb13-38" tabindex="-1"></a><span class="co">#&gt; 35 1200000000                               Region XII (SOCCSKSARGEN)</span></span>
+<span id="cb13-39"><a href="#cb13-39" tabindex="-1"></a><span class="co">#&gt; 36 1200000000                               Region XII (SOCCSKSARGEN)</span></span>
+<span id="cb13-40"><a href="#cb13-40" tabindex="-1"></a><span class="co">#&gt; 37 1300000000                           National Capital Region (NCR)</span></span>
+<span id="cb13-41"><a href="#cb13-41" tabindex="-1"></a><span class="co">#&gt; 38 1300000000                           National Capital Region (NCR)</span></span>
+<span id="cb13-42"><a href="#cb13-42" tabindex="-1"></a><span class="co">#&gt; 39 1300000000                           National Capital Region (NCR)</span></span>
+<span id="cb13-43"><a href="#cb13-43" tabindex="-1"></a><span class="co">#&gt; 40 1400000000                  Cordillera Administrative Region (CAR)</span></span>
+<span id="cb13-44"><a href="#cb13-44" tabindex="-1"></a><span class="co">#&gt; 41 1400000000                  Cordillera Administrative Region (CAR)</span></span>
+<span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a><span class="co">#&gt; 42 1400000000                  Cordillera Administrative Region (CAR)</span></span>
+<span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a><span class="co">#&gt; 43 1600000000                                    Region XIII (Caraga)</span></span>
+<span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a><span class="co">#&gt; 44 1600000000                                    Region XIII (Caraga)</span></span>
+<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a><span class="co">#&gt; 45 1600000000                                    Region XIII (Caraga)</span></span>
+<span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a><span class="co">#&gt; 46 1700000000                                         MIMAROPA Region</span></span>
+<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a><span class="co">#&gt; 47 1700000000                                         MIMAROPA Region</span></span>
+<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a><span class="co">#&gt; 48 1700000000                                         MIMAROPA Region</span></span>
+<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a><span class="co">#&gt; 49 1800000000                              Negros Island Region (NIR)</span></span>
+<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a><span class="co">#&gt; 50 1900000000 Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)</span></span>
+<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a><span class="co">#&gt; 51 1900000000 Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)</span></span>
+<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a><span class="co">#&gt; 52 1900000000 Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)</span></span>
+<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a><span class="co">#&gt;    geographic_level year population</span></span>
+<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a><span class="co">#&gt; 1               Reg 2015    5026128</span></span>
+<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a><span class="co">#&gt; 2               Reg 2020    5301139</span></span>
+<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a><span class="co">#&gt; 3               Reg 2024    5342453</span></span>
+<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a><span class="co">#&gt; 4               Reg 2015    3451410</span></span>
+<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a><span class="co">#&gt; 5               Reg 2020    3685744</span></span>
+<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a><span class="co">#&gt; 6               Reg 2024    3777608</span></span>
+<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a><span class="co">#&gt; 7               Reg 2015   11218177</span></span>
+<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a><span class="co">#&gt; 8               Reg 2020   12422172</span></span>
+<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a><span class="co">#&gt; 9               Reg 2024   12989074</span></span>
+<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a><span class="co">#&gt; 10              Reg 2015   14414774</span></span>
+<span id="cb13-67"><a href="#cb13-67" tabindex="-1"></a><span class="co">#&gt; 11              Reg 2020   16195042</span></span>
+<span id="cb13-68"><a href="#cb13-68" tabindex="-1"></a><span class="co">#&gt; 12              Reg 2024   16933234</span></span>
+<span id="cb13-69"><a href="#cb13-69" tabindex="-1"></a><span class="co">#&gt; 13              Reg 2015    5796989</span></span>
+<span id="cb13-70"><a href="#cb13-70" tabindex="-1"></a><span class="co">#&gt; 14              Reg 2020    6082165</span></span>
+<span id="cb13-71"><a href="#cb13-71" tabindex="-1"></a><span class="co">#&gt; 15              Reg 2024    6064426</span></span>
+<span id="cb13-72"><a href="#cb13-72" tabindex="-1"></a><span class="co">#&gt; 16              Reg 2015    7536383</span></span>
+<span id="cb13-73"><a href="#cb13-73" tabindex="-1"></a><span class="co">#&gt; 17              Reg 2020    7954723</span></span>
+<span id="cb13-74"><a href="#cb13-74" tabindex="-1"></a><span class="co">#&gt; 18              Reg 2024    4861911</span></span>
+<span id="cb13-75"><a href="#cb13-75" tabindex="-1"></a><span class="co">#&gt; 19              Reg 2015    7396898</span></span>
+<span id="cb13-76"><a href="#cb13-76" tabindex="-1"></a><span class="co">#&gt; 20              Reg 2020    8081988</span></span>
+<span id="cb13-77"><a href="#cb13-77" tabindex="-1"></a><span class="co">#&gt; 21              Reg 2024    6640875</span></span>
+<span id="cb13-78"><a href="#cb13-78" tabindex="-1"></a><span class="co">#&gt; 22              Reg 2015    4440150</span></span>
+<span id="cb13-79"><a href="#cb13-79" tabindex="-1"></a><span class="co">#&gt; 23              Reg 2020    4547150</span></span>
+<span id="cb13-80"><a href="#cb13-80" tabindex="-1"></a><span class="co">#&gt; 24              Reg 2024    4625929</span></span>
+<span id="cb13-81"><a href="#cb13-81" tabindex="-1"></a><span class="co">#&gt; 25              Reg 2015    3629783</span></span>
+<span id="cb13-82"><a href="#cb13-82" tabindex="-1"></a><span class="co">#&gt; 26              Reg 2020    3875576</span></span>
+<span id="cb13-83"><a href="#cb13-83" tabindex="-1"></a><span class="co">#&gt; 27              Reg 2024    5089934</span></span>
+<span id="cb13-84"><a href="#cb13-84" tabindex="-1"></a><span class="co">#&gt; 28              Reg 2015    4689302</span></span>
+<span id="cb13-85"><a href="#cb13-85" tabindex="-1"></a><span class="co">#&gt; 29              Reg 2020    5022768</span></span>
+<span id="cb13-86"><a href="#cb13-86" tabindex="-1"></a><span class="co">#&gt; 30              Reg 2024    5178326</span></span>
+<span id="cb13-87"><a href="#cb13-87" tabindex="-1"></a><span class="co">#&gt; 31              Reg 2015    4893318</span></span>
+<span id="cb13-88"><a href="#cb13-88" tabindex="-1"></a><span class="co">#&gt; 32              Reg 2020    5243536</span></span>
+<span id="cb13-89"><a href="#cb13-89" tabindex="-1"></a><span class="co">#&gt; 33              Reg 2024    5389422</span></span>
+<span id="cb13-90"><a href="#cb13-90" tabindex="-1"></a><span class="co">#&gt; 34              Reg 2015    4545276</span></span>
+<span id="cb13-91"><a href="#cb13-91" tabindex="-1"></a><span class="co">#&gt; 35              Reg 2020    4901486</span></span>
+<span id="cb13-92"><a href="#cb13-92" tabindex="-1"></a><span class="co">#&gt; 36              Reg 2024    4462776</span></span>
+<span id="cb13-93"><a href="#cb13-93" tabindex="-1"></a><span class="co">#&gt; 37              Reg 2015   12877253</span></span>
+<span id="cb13-94"><a href="#cb13-94" tabindex="-1"></a><span class="co">#&gt; 38              Reg 2020   13484462</span></span>
+<span id="cb13-95"><a href="#cb13-95" tabindex="-1"></a><span class="co">#&gt; 39              Reg 2024   14001751</span></span>
+<span id="cb13-96"><a href="#cb13-96" tabindex="-1"></a><span class="co">#&gt; 40              Reg 2015    1722006</span></span>
+<span id="cb13-97"><a href="#cb13-97" tabindex="-1"></a><span class="co">#&gt; 41              Reg 2020    1797660</span></span>
+<span id="cb13-98"><a href="#cb13-98" tabindex="-1"></a><span class="co">#&gt; 42              Reg 2024    1808985</span></span>
+<span id="cb13-99"><a href="#cb13-99" tabindex="-1"></a><span class="co">#&gt; 43              Reg 2015    2596709</span></span>
+<span id="cb13-100"><a href="#cb13-100" tabindex="-1"></a><span class="co">#&gt; 44              Reg 2020    2804788</span></span>
+<span id="cb13-101"><a href="#cb13-101" tabindex="-1"></a><span class="co">#&gt; 45              Reg 2024    2865196</span></span>
+<span id="cb13-102"><a href="#cb13-102" tabindex="-1"></a><span class="co">#&gt; 46              Reg 2015    2963360</span></span>
+<span id="cb13-103"><a href="#cb13-103" tabindex="-1"></a><span class="co">#&gt; 47              Reg 2020    3228558</span></span>
+<span id="cb13-104"><a href="#cb13-104" tabindex="-1"></a><span class="co">#&gt; 48              Reg 2024    3245446</span></span>
+<span id="cb13-105"><a href="#cb13-105" tabindex="-1"></a><span class="co">#&gt; 49              Reg 2024    4904944</span></span>
+<span id="cb13-106"><a href="#cb13-106" tabindex="-1"></a><span class="co">#&gt; 50              Reg 2015    3781387</span></span>
+<span id="cb13-107"><a href="#cb13-107" tabindex="-1"></a><span class="co">#&gt; 51              Reg 2020    4404288</span></span>
+<span id="cb13-108"><a href="#cb13-108" tabindex="-1"></a><span class="co">#&gt; 52              Reg 2024    4545486</span></span></code></pre></div>
+</div>
+<div id="wide-format-one-row-per-area" class="section level3">
+<h3>Wide format — one row per area</h3>
+<p>Set <code>wide = TRUE</code> to get each census year as its own
+column, making it easy to compare figures side by side or feed into a
+table or chart:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>region_pop_wide <span class="ot">&lt;-</span> <span class="fu">get_population</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">geographic_level =</span> <span class="st">&quot;Region&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">details          =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">wide             =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>region_pop_wide</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt;     psgc_code                                               area_name</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; 1  0100000000                                Region I (Ilocos Region)</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; 2  0200000000                              Region II (Cagayan Valley)</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; 3  0300000000                              Region III (Central Luzon)</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; 4  0400000000                                Region IV-A (CALABARZON)</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; 5  0500000000                                 Region V (Bicol Region)</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt; 6  0600000000                             Region VI (Western Visayas)</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; 7  0700000000                            Region VII (Central Visayas)</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; 8  0800000000                           Region VIII (Eastern Visayas)</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; 9  0900000000                         Region IX (Zamboanga Peninsula)</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; 10 1000000000                            Region X (Northern Mindanao)</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; 11 1100000000                                Region XI (Davao Region)</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; 12 1200000000                               Region XII (SOCCSKSARGEN)</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; 13 1300000000                           National Capital Region (NCR)</span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; 14 1400000000                  Cordillera Administrative Region (CAR)</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; 15 1600000000                                    Region XIII (Caraga)</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; 16 1700000000                                         MIMAROPA Region</span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; 17 1800000000                              Negros Island Region (NIR)</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; 18 1900000000 Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt;    geographic_level population_2015 population_2020 population_2024</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; 1               Reg         5026128         5301139         5342453</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; 2               Reg         3451410         3685744         3777608</span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt; 3               Reg        11218177        12422172        12989074</span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt; 4               Reg        14414774        16195042        16933234</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt; 5               Reg         5796989         6082165         6064426</span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt; 6               Reg         7536383         7954723         4861911</span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; 7               Reg         7396898         8081988         6640875</span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt; 8               Reg         4440150         4547150         4625929</span></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; 9               Reg         3629783         3875576         5089934</span></span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="co">#&gt; 10              Reg         4689302         5022768         5178326</span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt; 11              Reg         4893318         5243536         5389422</span></span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt; 12              Reg         4545276         4901486         4462776</span></span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt; 13              Reg        12877253        13484462        14001751</span></span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a><span class="co">#&gt; 14              Reg         1722006         1797660         1808985</span></span>
+<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a><span class="co">#&gt; 15              Reg         2596709         2804788         2865196</span></span>
+<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a><span class="co">#&gt; 16              Reg         2963360         3228558         3245446</span></span>
+<span id="cb14-43"><a href="#cb14-43" tabindex="-1"></a><span class="co">#&gt; 17              Reg              NA              NA         4904944</span></span>
+<span id="cb14-44"><a href="#cb14-44" tabindex="-1"></a><span class="co">#&gt; 18              Reg         3781387         4404288         4545486</span></span></code></pre></div>
+</div>
+<div id="attach-population-data-to-the-psgc-list" class="section level3">
+<h3>Attach population data to the PSGC list</h3>
+<p>If you want population figures alongside the main PSGC table (rather
+than as a separate data frame), use
+<code>include_population_data = TRUE</code> in <code>get_psgc()</code>.
+This adds a <code>population_data</code> list-column — each cell is a
+small data frame with <code>population</code> and <code>year</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>regions_with_pop <span class="ot">&lt;-</span> <span class="fu">get_psgc</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">geographic_level       =</span> <span class="st">&quot;Region&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">include_population_data =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co"># Inspect the population data for the first region</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>regions_with_pop<span class="sc">$</span>population_data[[<span class="dv">1</span>]]</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt;   population year</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 1    5026128 2015</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 2    5301139 2020</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 3    5342453 2024</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="tracking-codes-across-releases" class="section level2">
+<h2>Tracking codes across releases</h2>
+<p>The PSA occasionally renumbers or abolishes areas between releases.
+<code>map_psgc()</code> traces a code forward to any later release so
+you can keep longitudinal datasets consistent.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">map_psgc</span>(<span class="st">&quot;0100000000&quot;</span>)  <span class="co"># forward to the latest release</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt;              old_code   new_code mapping_type from_release to_release</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; 0100000000 0100000000 0100000000       direct      Q1_2023    Q1_2026</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">map_psgc</span>(<span class="st">&quot;0100000000&quot;</span>, <span class="at">to =</span> <span class="st">&quot;Q4_2023&quot;</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt;              old_code   new_code mapping_type from_release to_release</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co">#&gt; 0100000000 0100000000 0100000000       direct      Q1_2023    Q4_2023</span></span></code></pre></div>
+<p>The <code>mapping_type</code> column tells you what happened to the
+code:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>direct</code></td>
+<td>Code is unchanged</td>
+</tr>
+<tr class="even">
+<td><code>renumbered</code></td>
+<td>Code was assigned a new number</td>
+</tr>
+<tr class="odd">
+<td><code>split</code></td>
+<td>One area was divided into multiple areas</td>
+</tr>
+<tr class="even">
+<td><code>merged</code></td>
+<td>Multiple areas were merged into one</td>
+</tr>
+<tr class="odd">
+<td><code>abolished</code></td>
+<td>Area no longer exists (<code>new_code</code> will be
+<code>NA</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>This is especially useful when joining PSGC-coded survey data from
+different years — use <code>map_psgc()</code> first to normalise all
+codes to a single release before merging.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
