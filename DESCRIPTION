@@ -1,7 +1,7 @@
 Package: psgc
 Type: Package
 Title: Philippine Standard Geographic Code
-Version: 0.1.0
+Version: 0.1.2
 Description: Provides access to the Philippine Standard Geographic Code (PSGC),
     an official classification system for geographic areas in the Philippines
     published by the Philippine Statistics Authority (PSA). Includes area names,
@@ -30,8 +30,8 @@ Depends: R (>= 3.5)
 RoxygenNote: 7.3.3
 URL: https://yng-me.github.io/psgc/
 NeedsCompilation: no
-Packaged: 2026-05-08 08:28:48 UTC; bhasabdulsamad
+Packaged: 2026-07-25 06:13:11 UTC; bhasabdulsamad
 Author: Bhas Abdulsamad [aut, cre, cph] (ORCID:
     <https://orcid.org/0009-0002-5891-8124>)
 Repository: CRAN
-Date/Publication: 2026-05-13 07:20:02 UTC
+Date/Publication: 2026-07-25 06:40:02 UTC
