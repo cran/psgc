@@ -5,6 +5,10 @@ knitr::opts_chunk$set(
 )
 library(psgc)
 
+## ----echo=FALSE---------------------------------------------------------------
+v_first <- paste0(unlist(strsplit(psgc::list_releases()[1], "_")), collapse = " ")
+v_latest <- paste0(unlist(strsplit(psgc::latest_release(), "_")), collapse = " ")
+
 ## ----releases-----------------------------------------------------------------
 list_releases()
 latest_release()
